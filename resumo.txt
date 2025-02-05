@@ -134,3 +134,5 @@ xxxxxxxxxxxxxxxxx Conjunto de Dados Review xxxxxxxxxxxxxxxxx
 -- Após isso, vamos ter a tabela de entrada do modelo
 
 -- Como vamos treinar o modelo, vamos retirar todos os valores nulos e vazios com o .dropna()
+
+-- PAREI NO VIDEO: https://www.youtube.com/watch?v=ctTFAeL4JgU
