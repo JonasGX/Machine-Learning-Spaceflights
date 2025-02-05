@@ -1,0 +1,136 @@
+xx Como criar uma venv xx
+- python -m venv xxxxx
+- source xxxxx/Scripts/activate
+
+
+xx Introduction to Kedro xx
+
+- Kedro é construído para reduzir os débitos técnicos em Ciencia de Dados.
+- Tornando facil a transição dos experimentos para produção.
+
+xx What is Kedro? xx
+- Estrutura python para projetos em Ciencias de Dados
+- Reduz o tempo gasto na escrita de experimentos em CD
+- Kedro oferece um modelo de Projeto dividindo:
+    + Código fonte dos Dados
+    + Configuração dos seus Notebooks
+    + Qualquer outro ativo que tenha ...
+
+- Possuí um catalogo de dados, que define os conjuntos de dados
+- Os projetos são extraídos em torno de nós e pipelines:
+    + Pipelines
+        - Essas funções são organizadas de acordo com as entradas e saida para formar um pipeline
+    + Nodes: 
+        - Funções específicas que executam algum tipo de processamento
+
+
+xx Entendendo o Projeto xx
+Estamos em 2160, e a indústria do turismo espacial está crescendo. Globalmente, milhares de empresas de ônibus
+espaciais levam turistas à Lua e de volta. Você conseguiu obter dados que listam as comodidades oferecidas em
+cada ônibus espacial, avaliações de clientes e informações da empresa.
+
+Projeto : Você quer construir um modelo que preveja o preço de cada viagem à Lua e o voo de volta correspondente.
+
+xx Criando o projeto Kedro spaceflights(voos espaciais) xx
+- pip install kedro -> Instala a biblioteca kedro
+
+- kedro new --starter=spaceflights-pandas -> Cria um projeto já pronto do spaceflights
+- kedro new --> all --> none cria um projeto com a estrutura kedro do zero
+
+- cd xxnome_projetoxx --> pip install -r requirements.txt
+
+- Entendendo a arquitetura do projeto Kedro:
+    + conf:
+        - Podemos observar que temos dois diretorios base e local
+        - É aqui que todas as configurações vão ficar e todos os conjuntos de dados e parametros que precisamos
+    + data:
+        - Podemos observar uma série de diretórios classificados pela evolução do fluxo de dados
+    + docs:
+        - Para realizar a documentação do seu projeto
+    + notebooks:
+        - Conseguimos criar jupyter notebooks, para explorar os dados que deveriamos estar colocando
+    + src:
+        - Contém todo o código fonte do projeto
+        - Inclui todo o pré-processamento, pós processamento, treinamento do moelos e assim por diante
+
+- Abrindo o projeto no jupyter com o comando 'jupyter notebook'
+
+xx Dentro do Jupyter Notebook xx
+- Carregamos a extensão do kedro no jupyter: %load_ext kedro.ipython
+- Para visualizar todos os conjuntos de dados, entradas e saídas podemos rodar o comando: catalog
+- Para visualizar todas as pipelines rode: pipelines
+
+xxxxxxxxxxxxxxxxx  Começando a brincadeira - Primeiros passos xxxxxxxxxxxxxxxxx
+
+-- Vamos precisar modificar nosso catalogo para adicionar três entradas de conjunto de dados para que o Kedro possa carrega-los
+-- Esses são os conjuntos de dados:
+    + companies.csvcontém dados sobre empresas de viagens espaciais, como sua localização, contagem de frota e classificação
+    + reviews.csvé um conjunto de avaliações de clientes para categorias, como conforto e preço
+    + shuttles.xlsxé um conjunto de atributos para naves espaciais em toda a frota, como seu tipo de motor e capacidade de passageiros
+
+-- Inserir os três conjuntos de dados acima em data/01_raw/
+
+-- Criar um notebook para explorar os dados e nomear
+
+-- rodar o comando $pip install kedro-datasets[pandas]
+* Esse comando, puxa diversas sérias para carregar os conjuntos de Dados
+
+-- Acessar o arquivo de catalog em conf/base/catalog.yml
+* Escrever o código conforme mostra o arquivo catalog.yml
+
+-- após configurar catalog.yml rodar os códigos do notebook: data_exploration
+
+-- Com os códigos de exploração dos dados realizados, vamos partir para a criação das funções em python
+* Vamos refatorar os códigos para depois inserir em funções python para a criação das pipelines
+
+
+xxxxxxxxxxxxxxxxx - Criando a primeira pipeline xxxxxxxxxxxxxxxxx
+
+-- Com o comando no terminal: kedro pipeline create data_processing
+* Vai ser criado uma pasta dentro de pipelines com o nome 
+* Dentro da pasta vai conter os arquivos nodes e pipelines
+    -> Nodes: Funções que terão quaisquer operações para serem executadas
+
+-- Mover as funções criadas no jupyter para o arquivo nodes.python
+
+-- Com as funções migradas, criamos duas funções a mais em nodes.py
+    -> preprocess_comapanies e preprocess_shuttles
+    -> É aqui que as funções são chamadas para tratativa dos dados de companies e de shuttles
+
+-- Com a estrutura das funções criadas, vamos começar a criar as pipelines em pieplines.py
+
+-- Node é um mapeamento entre a função python e alguns inputs e outputs
+
+-- Com a pipenline criada, vamos executa-la para ver se está funcionando
+    -> kedro registry list: verifica se a piepline está cadastrada corretamente
+
+-- vamos executar a pipeline com o comando: kedro run --pipeline data_processing
+
+-- Até aqui, os outputs não estão sendo salvos, pois não foi definido e configurado o local 
+para o conjunto de dados das intermediarias companies e shuttles
+
+
+xxxxxxxxxxxxxxxxx dados intermediários xxxxxxxxxxxxxxxxx
+
+-- Com as configurações realizadas no catalog.yml, conseguimos salvar os dataframes executando o kedro
+
+-- Se observarmos na pasta 02_intermediate vemos dois aruqivos parquet gerados pelas pipelines preprocess_comapanies e preprocess_shuttles
+
+xxxxxxxxxxxxxxxxx kedro viz xxxxxxxxxxxxxxxxx
+
+-- Através do kedro viz, conseguimos visualizar de forma gráfica o fluxo dos nodes e pipelines
+
+-- Para instalar basta rodar pip install kedro-viz
+
+-- Rodar via terminal o comando kedro viz
+
+
+xxxxxxxxxxxxxxxxx Conjunto de Dados Review xxxxxxxxxxxxxxxxx
+
+-- O objetivo agora é carregar o reviews(avaliaçõpes) com shutttles(onibus espaciais)
+
+-- E apos isso, realizar o join com o conjunto de dados companies
+
+-- Após isso, vamos ter a tabela de entrada do modelo
+
+-- Como vamos treinar o modelo, vamos retirar todos os valores nulos e vazios com o .dropna()
